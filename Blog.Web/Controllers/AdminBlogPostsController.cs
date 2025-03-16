@@ -156,5 +156,21 @@ namespace Blog.Web.Controllers
 
             //redirect to GET
         }
+
+        public async Task<IActionResult> Delete(EditBlogPostRequest editBlogPostRequest)
+        {
+            //Talk to repository to delete this blog post and tags
+            var deletedBlog =  await _blogPostRepository.DeleteAsync(editBlogPostRequest.Id);
+            if (deletedBlog != null)
+            {
+                //Show success response
+                return RedirectToAction("List");
+            }
+
+            //display the response
+            return RedirectToAction("Edit", new { id = editBlogPostRequest.Id});
+        }
+
+
     }
 }

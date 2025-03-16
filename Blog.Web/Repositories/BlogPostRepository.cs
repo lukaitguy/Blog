@@ -21,9 +21,17 @@ namespace Blog.Web.Repositories
             return blogPost;
         }
 
-        public Task<BlogPost> DeleteAsync(Guid id)
+        public async Task<BlogPost> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var existingBlog = await blogDbContext.BlogPosts.FindAsync(id);
+            if (existingBlog != null)
+            {
+                blogDbContext.BlogPosts.Remove(existingBlog);
+                await blogDbContext.SaveChangesAsync();
+                return existingBlog;
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<BlogPost>> GetAll()
@@ -34,6 +42,11 @@ namespace Blog.Web.Repositories
         public async Task<BlogPost?> GetAsync(Guid id)
         {
             return await blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<BlogPost?> GetByUrlHandleAsync(string urlHandle)
+        {
+            return await blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
         }
 
         public async Task<BlogPost> UpdateAsync(BlogPost blogPost)
@@ -58,5 +71,6 @@ namespace Blog.Web.Repositories
             }
             return null;
         }
+
     }
 }

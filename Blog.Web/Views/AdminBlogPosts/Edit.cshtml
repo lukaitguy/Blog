@@ -36,6 +36,18 @@
                 <input type="text" class="form-control" id="shortDesc" asp-for="ShortDescription" />
             </div>
             <div class="mb-3">
+                <label class="form-label">Featured Image Upload</label>
+                <input type="file" class="form-control" id="featuredImgUpload" />
+				@if (Model.FeaturedImageUrl != null)
+				{
+					<img src="@Model.FeaturedImageUrl" id="featuredImageDisplay" style="display: block;width: 300px;" />
+				}
+				else
+				{
+                    <img src="" id="featuredImageDisplay" style="display:none;width: 300px;" />
+				}
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Featured Image URL</label>
                 <input type="text" class="form-control" id="featuredImg" asp-for="FeaturedImageUrl" />
             </div>
@@ -61,8 +73,9 @@
                 <label class="form-label">Tags</label>
                 <select class="form-select" asp-items="@Model.Tags" asp-for="SelectedTags"></select>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 d-flex">
                 <button class="btn btn-dark" type="submit">Update</button>
+                <button class="btn btn-danger ms-2" type="submit" asp-area="" asp-controller="AdminBlogPosts" asp-action="Delete">Delete</button>
             </div>
         </form>
     }
@@ -73,3 +86,37 @@
 
     
 </div>
+
+@section Scripts {
+    <script>
+        var editor = new FroalaEditor('#content', {
+            imageUploadURL: '/api/images',
+        });
+
+        const featuredUploadElement = document.getElementById('featuredImgUpload');
+        const featuredImgUrlElement = document.getElementById('featuredImg');
+        const featuredImgDisplay = document.getElementById('featuredImageDisplay')
+
+        async function uploadFeaturedImage(e){
+            console.log(e.target.files[0]);
+
+            let data = new FormData();
+            data.append('file', e.target.files[0]);
+
+            await fetch('/api/images', {
+                method: 'post',
+                headers: {
+                    'Accept': '*/*',
+                },
+                body: data
+            }).then(response => response.json())
+                .then(result => {
+                    featuredImgUrlElement.value = result.link;
+                    featuredImgDisplay.src = result.link;
+                    featuredImgDisplay.style.display = 'block';
+                });
+        }
+
+        featuredUploadElement.addEventListener('change', uploadFeaturedImage);
+    </script>
+            }
