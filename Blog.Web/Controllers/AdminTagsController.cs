@@ -29,6 +29,11 @@ namespace Blog.Web.Controllers
         [ActionName("Add")]
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
+            ValidateAddTagRequest(addTagRequest);
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
             //Mapping AddTagRequest to Tag domain model
             var tag = new Tag
             {
@@ -107,6 +112,17 @@ namespace Blog.Web.Controllers
             
             return RedirectToAction("Edit", new { id = editTag.Id });
 
+        }
+
+        private void ValidateAddTagRequest(AddTagRequest addTagRequest)
+        {   
+            if(addTagRequest.Name is not null && addTagRequest.DisplayName is not null)
+            {
+                if (addTagRequest.Name == addTagRequest.DisplayName)
+                {
+                    ModelState.AddModelError("DisplayName", "Display Name should be different from Name");
+                }
+            }
         }
     }
 }

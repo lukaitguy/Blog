@@ -1,8 +1,13 @@
-﻿namespace Blog.Web.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Blog.Web.Models.ViewModels
 {
     public class LoginViewModel
     {
-        public string UserName { get; set; }
+        [Required]
+        public string Username { get; set; }
+        [Required]
+        [MinLength(6, ErrorMessage = "Password is not correct! Try again!")]
         public string Password { get; set; }
         public string? ReturnUrl { get; set; }
     }

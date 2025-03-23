@@ -24,25 +24,28 @@ namespace Blog.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-            var identityUser = new IdentityUser
+            if (ModelState.IsValid)
             {
-                UserName = registerViewModel.UserName,
-                Email = registerViewModel.Email
-            };
-
-            var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
-
-            if(identityResult.Succeeded)
-            {
-                // Assign this user the "User" role
-                var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
-
-                if(roleIdentityResult.Succeeded)
+                var identityUser = new IdentityUser
                 {
-                    // Show success notification
-                    return RedirectToAction("Register");
-                }
+                    UserName = registerViewModel.Username,
+                    Email = registerViewModel.Email
+                };
 
+                var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
+
+                if (identityResult.Succeeded)
+                {
+                    // Assign this user the "User" role
+                    var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
+
+                    if (roleIdentityResult.Succeeded)
+                    {
+                        // Show success notification
+                        return RedirectToAction("Register");
+                    }
+
+                }
             }
             // Show error notification
             return View();
@@ -59,7 +62,12 @@ namespace Blog.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel login)
         {
-            var signInResult = await signInManager.PasswordSignInAsync(login.UserName, login.Password, false, false);
+            if (!ModelState.IsValid)
+            {            
+                // show errors
+                return View();
+            }
+            var signInResult = await signInManager.PasswordSignInAsync(login.Username, login.Password, false, false);
 
             if(signInResult != null && signInResult.Succeeded)
             {
@@ -69,7 +77,6 @@ namespace Blog.Web.Controllers
                 }
                 return RedirectToAction("Index", "Home");
             }
-            // show errors
             return View();
 
         }

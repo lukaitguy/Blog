@@ -5,7 +5,7 @@
 
 <div class="container mx-auto">
 	<div class="row justify-content-center">
-		<div class="col-12 col-lg-6">
+		<div class="col-12 col-lg-6 py-5">
 
 			<h1 class="mt-3 mb-3 h3">
 				Register
@@ -15,17 +15,20 @@
 			
 				<div class="mb-3">
 					<label class="form-label">Username</label>
-					<input type="text" class="form-control" placeholder="Username" id="username" asp-for="UserName">
+					<input type="text" class="form-control" placeholder="Username" id="username" asp-for="Username" required />
+					<span class="text-danger" asp-validation-for="Username"></span>
 				</div>
 
 				<div class="mb-3">
 					<label class="form-label">Email</label>
-					<input type="email" class="form-control" placeholder="Email" id="email" asp-for="Email">
+					<input type="email" class="form-control" placeholder="Email" id="email" asp-for="Email" required />
+					<span class="text-danger" asp-validation-for="Email"></span>
 				</div>
 
 				<div class="mb-3">
 					<label class="form-label">Password</label>
-					<input type="password" class="form-control" placeholder="Password" id="password" asp-for="Password">
+					<input type="password" class="form-control" placeholder="Password" id="password" asp-for="Password" required minlength="6" />
+					<span class="text-danger" asp-validation-for="Password"></span>
 				</div>
 
 				<div class="mb-3">
