@@ -48,10 +48,28 @@ namespace Blog.Web.Controllers
         
         [HttpGet]
         [ActionName("List")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 3, int pageNumber = 1)
         {
+            var totalRecords = await tagRepository.CountAsync();
+            var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
+
+            if(pageNumber > totalPages)
+            {
+                pageNumber--;
+            }
+            if(pageNumber < 1)
+            {
+                pageNumber++;
+            }
+
+            ViewBag.PageSize = pageSize;
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDirection = sortDirection;
             //use dbContext to read the tags
-            var tags = await tagRepository.GetAll();
+            var tags = await tagRepository.GetAll(searchQuery, sortBy, sortDirection, pageNumber, pageSize);
 
             return View(tags);
         }
